@@ -12,6 +12,7 @@ interface App extends Application {
 const app: App = express();
 export default app;
 app.use(cors());
+app.use(express.urlencoded({ extended: true }));
 
 const mocks: any[] = [];
 
@@ -26,6 +27,11 @@ app.all("*", (req, res, next) => {
     const settings = mocks.shift();
 
     setTimeout(() => {
+
+        if (settings.handler && typeof settings.handler === "function" ) {
+            return settings.handler(req, res);
+        }
+
         if (settings.headers) {
             res.set(settings.headers);
         }

@@ -3,9 +3,11 @@
  * are defined here so that tests can import this library and test them.
  */
 
+import * as Base64 from 'crypto-js/enc-base64';
 import HttpError from "./HttpError";
 import { patientParams } from "./settings";
 import { fhirclient } from "./types";
+const SHA256 = require('crypto-js/sha256');
 const debug = require("debug");
 
 // $lab:coverage:off$
@@ -267,6 +269,25 @@ export function randomString(
         result.push(charSet.charAt(Math.floor(Math.random() * len)));
     }
     return result.join("");
+}
+
+/** 
+ * Generate a PKCE challenge pair. With verifier length to 43
+ * @category Utility
+ */
+export function pkceChallenge(): fhirclient.PKCEObject {
+
+    const mask = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
+    const verifier = randomString(43, mask);
+    const challenge = Base64.stringify(SHA256(verifier))
+        .replace(/=/g, "")
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_");
+
+    return {
+        code_verifier: verifier,
+        code_challenge: challenge,
+    };
 }
 
 /**

@@ -1,6 +1,7 @@
 import { expect }   from "@hapi/code";
 import * as Lab     from "@hapi/lab";
 import { Response } from "cross-fetch";
+import {createHash} from "crypto";
 import * as lib     from "../src/lib";
 import HttpError    from "../src/HttpError";
 import mockServer   from "./mocks/mockServer";
@@ -125,6 +126,24 @@ describe("Lib", () => {
             expect(lib.randomString(8, "abc")).to.match(/^[abc]{8}$/);
             expect(lib.randomString(8, "xyz")).to.match(/^[xyz]{8}$/);
             expect(lib.randomString(8, "123")).to.match(/^[123]{8}$/);
+        });
+    });
+
+    describe("pkceChallenge", () => {
+        it ("PKCE Object is valid shape", () => {
+            const pkce = lib.pkceChallenge();
+            expect(pkce.code_verifier.length).to.equal(43);
+            expect(pkce.code_verifier).to.match(/^[A-Za-z\d\-._~]{43}$/);
+            expect(pkce.code_challenge).to.not.part.include(['=', '+', '/']);
+        });
+
+        it ("Re-generating the code_challenge should be the same", () => {
+            const pkce = lib.pkceChallenge();
+            const code_challenge_1 = pkce.code_challenge;
+            const code_challenge_2 = 
+                createHash('sha256').update(pkce.code_verifier).digest('base64')
+                .replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+            expect(code_challenge_1).to.equal(code_challenge_2);
         });
     });
 

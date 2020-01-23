@@ -8,9 +8,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+const Base64 = require("crypto-js/enc-base64");
+
 const HttpError_1 = require("./HttpError");
 
 const settings_1 = require("./settings");
+
+const SHA256 = require('crypto-js/sha256');
 
 const debug = require("debug"); // $lab:coverage:off$
 // @ts-ignore
@@ -309,6 +313,22 @@ function randomString(strLength = 8, charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef
 }
 
 exports.randomString = randomString;
+/**
+ * Generate a PKCE challenge pair. With verifier length to 43
+ * @category Utility
+ */
+
+function pkceChallenge() {
+  const mask = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
+  const verifier = randomString(43, mask);
+  const challenge = Base64.stringify(SHA256(verifier)).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+  return {
+    code_verifier: verifier,
+    code_challenge: challenge
+  };
+}
+
+exports.pkceChallenge = pkceChallenge;
 /**
  * Decodes a JWT token and returns it's body.
  * @param token The token to read

@@ -309,14 +309,14 @@ declare namespace fhirclient {
         completeInTarget?: boolean;
 
         /**
-         * In case pkce is enabled. Create the pkce object for the auth flow 
+         * In case pkce is enabled. Create the pkce object for the auth flow
          */
-        pkce?: PKCEObject
+        pkce?: PKCEObject;
     }
 
     interface PKCEObject {
         /**
-         * This is a cryptographically random string using the characters 
+         * This is a cryptographically random string using the characters
          * A-Z, a-z, 0-9, and the punctuation characters -._~ (hyphen, period,
          * underscore, and tilde), between 43 and 128 characters long
          */
@@ -467,7 +467,7 @@ declare namespace fhirclient {
          * If `true`, the app will execute an Authorization Code Grant Flow with PKCE
          * https://www.oauth.com/oauth2-servers/pkce/authorization-request/
          */
-        pkce?: boolean;
+        usePKCE?: boolean;
     }
 
     /**

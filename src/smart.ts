@@ -7,7 +7,7 @@ import {
     getAndCache,
     fetchConformanceStatement,
     getTargetWindow,
-    pkceChallenge
+    createPKCEChallenge
 } from "./lib";
 import Client from "./Client";
 import { SMART_KEY } from "./settings";
@@ -185,7 +185,7 @@ export async function authorize(env: fhirclient.Adapter, params: fhirclient.Auth
         width,
         height,
         completeInTarget,
-        pkce
+        usePKCE
     } = params;
 
     let {
@@ -238,13 +238,13 @@ export async function authorize(env: fhirclient.Adapter, params: fhirclient.Auth
         scope += " launch";
     }
 
-    let pkceObject = undefined;
-    if (pkce) {
+    let pkceObject;
+    if (usePKCE) {
         if (clientSecret) {
-            throw new Error("PKCE should only used for public app without clientSecret");
+            throw new Error("PKCE should only be used by public single-page web apps or native apps without a client secret");
         }
         // Generate pkce object if that is enabled
-        pkceObject = pkceChallenge();
+        pkceObject = createPKCEChallenge();
 
     }
 

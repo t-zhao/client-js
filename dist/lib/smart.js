@@ -176,7 +176,7 @@ async function authorize(env, params = {}, _noRedirect = false) {
     width,
     height,
     completeInTarget,
-    pkce
+    usePKCE
   } = params;
   let {
     iss,
@@ -222,15 +222,15 @@ async function authorize(env, params = {}, _noRedirect = false) {
     scope += " launch";
   }
 
-  let pkceObject = undefined;
+  let pkceObject;
 
-  if (pkce) {
+  if (usePKCE) {
     if (clientSecret) {
-      throw new Error("PKCE should only used for public app without clientSecret");
+      throw new Error("PKCE should only be used by public single-page web apps or native apps without a client secret");
     } // Generate pkce object if that is enabled
 
 
-    pkceObject = lib_1.pkceChallenge();
+    pkceObject = lib_1.createPKCEChallenge();
   } // If `authorize` is called, make sure we clear any previous state (in case
   // this is a re-authorize)
 

@@ -13501,13 +13501,13 @@ function randomString(strLength, charSet) {
 
 exports.randomString = randomString;
 /**
- * Generate a PKCE challenge pair. With verifier length to 43
+ * Generate a PKCE challenge pair with verifier length to 43
  * @category Utility
  */
 
-function pkceChallenge() {
-  var mask = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
-  var verifier = randomString(43, mask);
+function createPKCEChallenge() {
+  var charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
+  var verifier = randomString(43, charSet);
   var challenge = Base64.stringify(SHA256(verifier)).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
   return {
     code_verifier: verifier,
@@ -13515,9 +13515,9 @@ function pkceChallenge() {
   };
 }
 
-exports.pkceChallenge = pkceChallenge;
+exports.createPKCEChallenge = createPKCEChallenge;
 /**
- * Decodes a JWT token and returns it's body.
+ * Decodes a JWT token and returns its body.
  * @param token The token to read
  * @param env An `Adapter` or any other object that has an `atob` method
  * @category Utility
@@ -13732,34 +13732,33 @@ function _getTargetWindow() {
 
           case 17:
             if (!(target == "_blank")) {
-              _context3.next = 35;
+              _context3.next = 34;
               break;
             }
 
             targetWindow = null;
-            ;
-            _context3.prev = 20;
+            _context3.prev = 19;
             targetWindow = window.open("", "SMARTAuthPopup");
 
             if (targetWindow) {
-              _context3.next = 24;
+              _context3.next = 23;
               break;
             }
 
             throw new Error("Perhaps window.open was blocked");
 
-          case 24:
-            _context3.next = 29;
+          case 23:
+            _context3.next = 28;
             break;
 
-          case 26:
-            _context3.prev = 26;
-            _context3.t0 = _context3["catch"](20);
+          case 25:
+            _context3.prev = 25;
+            _context3.t0 = _context3["catch"](19);
             error = _context3.t0;
 
-          case 29:
+          case 28:
             if (targetWindow) {
-              _context3.next = 34;
+              _context3.next = 33;
               break;
             }
 
@@ -13767,39 +13766,39 @@ function _getTargetWindow() {
 
             return _context3.abrupt("return", self);
 
-          case 34:
+          case 33:
             return _context3.abrupt("return", targetWindow);
 
-          case 35:
+          case 34:
             if (!(target == "popup")) {
-              _context3.next = 52;
+              _context3.next = 51;
               break;
             }
 
             _targetWindow = null; // if (!targetWindow || targetWindow.closed) {
 
-            _context3.prev = 37;
+            _context3.prev = 36;
             _targetWindow = window.open("", "SMARTAuthPopup", ["height=" + height, "width=" + width, "menubar=0", "resizable=1", "status=0", "top=" + (screen.height - height) / 2, "left=" + (screen.width - width) / 2].join(","));
 
             if (_targetWindow) {
-              _context3.next = 41;
+              _context3.next = 40;
               break;
             }
 
             throw new Error("Perhaps the popup window was blocked");
 
-          case 41:
-            _context3.next = 46;
+          case 40:
+            _context3.next = 45;
             break;
 
-          case 43:
-            _context3.prev = 43;
-            _context3.t1 = _context3["catch"](37);
+          case 42:
+            _context3.prev = 42;
+            _context3.t1 = _context3["catch"](36);
             _error = _context3.t1;
 
-          case 46:
+          case 45:
             if (_targetWindow) {
-              _context3.next = 51;
+              _context3.next = 50;
               break;
             }
 
@@ -13807,31 +13806,31 @@ function _getTargetWindow() {
 
             return _context3.abrupt("return", self);
 
-          case 51:
+          case 50:
             return _context3.abrupt("return", _targetWindow);
 
-          case 52:
+          case 51:
             // Frame or window by name
             winOrFrame = frames[target];
 
             if (!winOrFrame) {
-              _context3.next = 55;
+              _context3.next = 54;
               break;
             }
 
             return _context3.abrupt("return", winOrFrame);
 
-          case 55:
+          case 54:
             _debug("Unknown target '%s'. Failing back to '_self'.", target);
 
             return _context3.abrupt("return", self);
 
-          case 57:
+          case 56:
           case "end":
             return _context3.stop();
         }
       }
-    }, _callee3, null, [[20, 26], [37, 43]]);
+    }, _callee3, null, [[19, 25], [36, 42]]);
   }));
   return _getTargetWindow.apply(this, arguments);
 }
@@ -14136,7 +14135,7 @@ function _authorize() {
   _authorize = (0, _asyncToGenerator2.default)(
   /*#__PURE__*/
   _regenerator.default.mark(function _callee(env, params, _noRedirect) {
-    var _params, redirect_uri, clientSecret, fakeTokenResponse, patientId, encounterId, client_id, target, width, height, completeInTarget, pkce, _params2, iss, launch, fhirServiceUrl, redirectUri, _params2$scope, scope, clientId, url, storage, serverUrl, pkceObject, oldKey, stateKey, state, fullSessionStorageSupport, redirectUrl, extensions, redirectParams, win;
+    var _params, redirect_uri, clientSecret, fakeTokenResponse, patientId, encounterId, client_id, target, width, height, completeInTarget, usePKCE, _params2, iss, launch, fhirServiceUrl, redirectUri, _params2$scope, scope, clientId, url, storage, serverUrl, pkceObject, oldKey, stateKey, state, fullSessionStorageSupport, redirectUrl, extensions, redirectParams, win;
 
     return _regenerator.default.wrap(function _callee$(_context) {
       while (1) {
@@ -14151,7 +14150,7 @@ function _authorize() {
             }
 
             // Obtain input
-            _params = params, redirect_uri = _params.redirect_uri, clientSecret = _params.clientSecret, fakeTokenResponse = _params.fakeTokenResponse, patientId = _params.patientId, encounterId = _params.encounterId, client_id = _params.client_id, target = _params.target, width = _params.width, height = _params.height, completeInTarget = _params.completeInTarget, pkce = _params.pkce;
+            _params = params, redirect_uri = _params.redirect_uri, clientSecret = _params.clientSecret, fakeTokenResponse = _params.fakeTokenResponse, patientId = _params.patientId, encounterId = _params.encounterId, client_id = _params.client_id, target = _params.target, width = _params.width, height = _params.height, completeInTarget = _params.completeInTarget, usePKCE = _params.usePKCE;
             _params2 = params, iss = _params2.iss, launch = _params2.launch, fhirServiceUrl = _params2.fhirServiceUrl, redirectUri = _params2.redirectUri, _params2$scope = _params2.scope, scope = _params2$scope === void 0 ? "" : _params2$scope, clientId = _params2.clientId;
             url = env.getUrl();
             storage = env.getStorage(); // For these three an url param takes precedence over inline option
@@ -14193,34 +14192,32 @@ function _authorize() {
               scope += " launch";
             }
 
-            pkceObject = undefined;
-
-            if (!pkce) {
-              _context.next = 22;
-              break;
-            }
-
-            if (!clientSecret) {
+            if (!usePKCE) {
               _context.next = 21;
               break;
             }
 
-            throw new Error("PKCE should only used for public app without clientSecret");
+            if (!clientSecret) {
+              _context.next = 20;
+              break;
+            }
+
+            throw new Error("PKCE should only be used by public single-page web apps or native apps without a client secret");
+
+          case 20:
+            // Generate pkce object if that is enabled
+            pkceObject = lib_1.createPKCEChallenge();
 
           case 21:
-            // Generate pkce object if that is enabled
-            pkceObject = lib_1.pkceChallenge();
-
-          case 22:
-            _context.next = 24;
+            _context.next = 23;
             return storage.get(settings_1.SMART_KEY);
 
-          case 24:
+          case 23:
             oldKey = _context.sent;
-            _context.next = 27;
+            _context.next = 26;
             return storage.unset(oldKey);
 
-          case 27:
+          case 26:
             // create initial state
             stateKey = lib_1.randomString(16);
             state = {
@@ -14237,14 +14234,14 @@ function _authorize() {
             fullSessionStorageSupport = isBrowser() ? lib_1.getPath(env, "options.fullSessionStorageSupport") : true;
 
             if (!fullSessionStorageSupport) {
-              _context.next = 33;
+              _context.next = 32;
               break;
             }
 
-            _context.next = 33;
+            _context.next = 32;
             return storage.set(settings_1.SMART_KEY, stateKey);
 
-          case 33:
+          case 32:
             // fakeTokenResponse to override stuff (useful in development)
             if (fakeTokenResponse) {
               Object.assign(state.tokenResponse, fakeTokenResponse);
@@ -14267,60 +14264,60 @@ function _authorize() {
             redirectUrl = redirectUri + "?state=" + encodeURIComponent(stateKey); // bypass oauth if fhirServiceUrl is used (but iss takes precedence)
 
             if (!(fhirServiceUrl && !iss)) {
-              _context.next = 46;
+              _context.next = 45;
               break;
             }
 
             debug("Making fake launch...");
-            _context.next = 41;
+            _context.next = 40;
             return storage.set(stateKey, state);
 
-          case 41:
+          case 40:
             if (!_noRedirect) {
-              _context.next = 43;
+              _context.next = 42;
               break;
             }
 
             return _context.abrupt("return", redirectUrl);
 
-          case 43:
-            _context.next = 45;
+          case 42:
+            _context.next = 44;
             return env.redirect(redirectUrl);
+
+          case 44:
+            return _context.abrupt("return", _context.sent);
 
           case 45:
-            return _context.abrupt("return", _context.sent);
-
-          case 46:
-            _context.next = 48;
+            _context.next = 47;
             return getSecurityExtensions(env, serverUrl);
 
-          case 48:
+          case 47:
             extensions = _context.sent;
             Object.assign(state, extensions);
-            _context.next = 52;
+            _context.next = 51;
             return storage.set(stateKey, state);
 
-          case 52:
+          case 51:
             if (state.authorizeUri) {
-              _context.next = 58;
+              _context.next = 57;
               break;
             }
 
             if (!_noRedirect) {
-              _context.next = 55;
+              _context.next = 54;
               break;
             }
 
             return _context.abrupt("return", redirectUrl);
 
-          case 55:
-            _context.next = 57;
+          case 54:
+            _context.next = 56;
             return env.redirect(redirectUrl);
 
-          case 57:
+          case 56:
             return _context.abrupt("return", _context.sent);
 
-          case 58:
+          case 57:
             // build the redirect uri
             redirectParams = ["response_type=code", "client_id=" + encodeURIComponent(clientId || ""), "scope=" + encodeURIComponent(scope), "redirect_uri=" + encodeURIComponent(redirectUri), "aud=" + encodeURIComponent(serverUrl), "state=" + encodeURIComponent(stateKey)]; // also pass this in case of EHR launch
 
@@ -14337,22 +14334,22 @@ function _authorize() {
             redirectUrl = state.authorizeUri + "?" + redirectParams.join("&");
 
             if (!_noRedirect) {
-              _context.next = 64;
+              _context.next = 63;
               break;
             }
 
             return _context.abrupt("return", redirectUrl);
 
-          case 64:
+          case 63:
             if (!(target && isBrowser())) {
-              _context.next = 73;
+              _context.next = 72;
               break;
             }
 
-            _context.next = 67;
+            _context.next = 66;
             return lib_1.getTargetWindow(target, width, height);
 
-          case 67:
+          case 66:
             win = _context.sent;
 
             if (win !== self) {
@@ -14381,14 +14378,14 @@ function _authorize() {
 
             return _context.abrupt("return");
 
-          case 73:
-            _context.next = 75;
+          case 72:
+            _context.next = 74;
             return env.redirect(redirectUrl);
 
-          case 75:
+          case 74:
             return _context.abrupt("return", _context.sent);
 
-          case 76:
+          case 75:
           case "end":
             return _context.stop();
         }

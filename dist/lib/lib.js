@@ -14,7 +14,7 @@ const HttpError_1 = require("./HttpError");
 
 const settings_1 = require("./settings");
 
-const SHA256 = require('crypto-js/sha256');
+const SHA256 = require("crypto-js/sha256");
 
 const debug = require("debug"); // $lab:coverage:off$
 // @ts-ignore
@@ -314,13 +314,13 @@ function randomString(strLength = 8, charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef
 
 exports.randomString = randomString;
 /**
- * Generate a PKCE challenge pair. With verifier length to 43
+ * Generate a PKCE challenge pair with verifier length to 43
  * @category Utility
  */
 
-function pkceChallenge() {
-  const mask = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
-  const verifier = randomString(43, mask);
+function createPKCEChallenge() {
+  const charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
+  const verifier = randomString(43, charSet);
   const challenge = Base64.stringify(SHA256(verifier)).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
   return {
     code_verifier: verifier,
@@ -328,9 +328,9 @@ function pkceChallenge() {
   };
 }
 
-exports.pkceChallenge = pkceChallenge;
+exports.createPKCEChallenge = createPKCEChallenge;
 /**
- * Decodes a JWT token and returns it's body.
+ * Decodes a JWT token and returns its body.
  * @param token The token to read
  * @param env An `Adapter` or any other object that has an `atob` method
  * @category Utility
@@ -487,7 +487,6 @@ async function getTargetWindow(target, width = 800, height = 720) {
   if (target == "_blank") {
     let error,
         targetWindow = null;
-    ;
 
     try {
       targetWindow = window.open("", "SMARTAuthPopup");

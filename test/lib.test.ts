@@ -131,14 +131,14 @@ describe("Lib", () => {
 
     describe("pkceChallenge", () => {
         it ("PKCE Object is valid shape", () => {
-            const pkce = lib.pkceChallenge();
+            const pkce = lib.createPKCEChallenge();
             expect(pkce.code_verifier.length).to.equal(43);
             expect(pkce.code_verifier).to.match(/^[A-Za-z\d\-._~]{43}$/);
             expect(pkce.code_challenge).to.not.part.include(['=', '+', '/']);
         });
 
         it ("Re-generating the code_challenge should be the same", () => {
-            const pkce = lib.pkceChallenge();
+            const pkce = lib.createPKCEChallenge();
             const code_challenge_1 = pkce.code_challenge;
             const code_challenge_2 = 
                 createHash('sha256').update(pkce.code_verifier).digest('base64')

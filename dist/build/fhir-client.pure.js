@@ -3642,13 +3642,13 @@ function randomString(strLength = 8, charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef
 
 exports.randomString = randomString;
 /**
- * Generate a PKCE challenge pair. With verifier length to 43
+ * Generate a PKCE challenge pair with verifier length to 43
  * @category Utility
  */
 
-function pkceChallenge() {
-  const mask = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
-  const verifier = randomString(43, mask);
+function createPKCEChallenge() {
+  const charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
+  const verifier = randomString(43, charSet);
   const challenge = Base64.stringify(SHA256(verifier)).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
   return {
     code_verifier: verifier,
@@ -3656,9 +3656,9 @@ function pkceChallenge() {
   };
 }
 
-exports.pkceChallenge = pkceChallenge;
+exports.createPKCEChallenge = createPKCEChallenge;
 /**
- * Decodes a JWT token and returns it's body.
+ * Decodes a JWT token and returns its body.
  * @param token The token to read
  * @param env An `Adapter` or any other object that has an `atob` method
  * @category Utility
@@ -3815,7 +3815,6 @@ async function getTargetWindow(target, width = 800, height = 720) {
   if (target == "_blank") {
     let error,
         targetWindow = null;
-    ;
 
     try {
       targetWindow = window.open("", "SMARTAuthPopup");
@@ -4115,7 +4114,7 @@ async function authorize(env, params = {}, _noRedirect = false) {
     width,
     height,
     completeInTarget,
-    pkce
+    usePKCE
   } = params;
   let {
     iss,
@@ -4161,15 +4160,15 @@ async function authorize(env, params = {}, _noRedirect = false) {
     scope += " launch";
   }
 
-  let pkceObject = undefined;
+  let pkceObject;
 
-  if (pkce) {
+  if (usePKCE) {
     if (clientSecret) {
-      throw new Error("PKCE should only used for public app without clientSecret");
+      throw new Error("PKCE should only be used by public single-page web apps or native apps without a client secret");
     } // Generate pkce object if that is enabled
 
 
-    pkceObject = lib_1.pkceChallenge();
+    pkceObject = lib_1.createPKCEChallenge();
   } // If `authorize` is called, make sure we clear any previous state (in case
   // this is a re-authorize)
 

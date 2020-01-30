@@ -14,7 +14,7 @@
         "module"       : "CommonJS",
         "target"       : "ES2019",
         "importHelpers": false,
-        "noEmitHelpers": true,
+        "noEmitHelpers": true
     },
     "include": [
         "src"

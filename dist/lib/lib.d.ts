@@ -94,12 +94,12 @@ export declare function absolute(path: string, baseUrl?: string): string;
  */
 export declare function randomString(strLength?: number, charSet?: string): string;
 /**
- * Generate a PKCE challenge pair. With verifier length to 43
+ * Generate a PKCE challenge pair with verifier length to 43
  * @category Utility
  */
-export declare function pkceChallenge(): fhirclient.PKCEObject;
+export declare function createPKCEChallenge(): fhirclient.PKCEObject;
 /**
- * Decodes a JWT token and returns it's body.
+ * Decodes a JWT token and returns its body.
  * @param token The token to read
  * @param env An `Adapter` or any other object that has an `atob` method
  * @category Utility

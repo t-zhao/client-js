@@ -3,11 +3,11 @@
  * are defined here so that tests can import this library and test them.
  */
 
-import * as Base64 from 'crypto-js/enc-base64';
+import * as Base64 from "crypto-js/enc-base64";
 import HttpError from "./HttpError";
 import { patientParams } from "./settings";
 import { fhirclient } from "./types";
-const SHA256 = require('crypto-js/sha256');
+const SHA256 = require("crypto-js/sha256");
 const debug = require("debug");
 
 // $lab:coverage:off$
@@ -271,14 +271,14 @@ export function randomString(
     return result.join("");
 }
 
-/** 
- * Generate a PKCE challenge pair. With verifier length to 43
+/**
+ * Generate a PKCE challenge pair with verifier length to 43
  * @category Utility
  */
-export function pkceChallenge(): fhirclient.PKCEObject {
+export function createPKCEChallenge(): fhirclient.PKCEObject {
 
-    const mask = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
-    const verifier = randomString(43, mask);
+    const charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
+    const verifier = randomString(43, charSet);
     const challenge = Base64.stringify(SHA256(verifier))
         .replace(/=/g, "")
         .replace(/\+/g, "-")
@@ -291,7 +291,7 @@ export function pkceChallenge(): fhirclient.PKCEObject {
 }
 
 /**
- * Decodes a JWT token and returns it's body.
+ * Decodes a JWT token and returns its body.
  * @param token The token to read
  * @param env An `Adapter` or any other object that has an `atob` method
  * @category Utility
@@ -452,7 +452,7 @@ export async function getTargetWindow(target: fhirclient.WindowTarget, width: nu
 
     // New tab or window
     if (target == "_blank") {
-        let error, targetWindow: Window | null = null;;
+        let error, targetWindow: Window | null = null;
         try {
             targetWindow = window.open("", "SMARTAuthPopup");
             if (!targetWindow) {
